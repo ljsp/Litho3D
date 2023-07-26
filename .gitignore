@@ -1,0 +1,10 @@
+.idea
+.vs
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+cmake-build-debug
+x64
+imgui.ini
