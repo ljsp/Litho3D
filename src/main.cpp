@@ -53,8 +53,8 @@ DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-static const char* vShader = "Shaders/shader.vert";
-static const char* fShader = "Shaders/shader.frag";
+static const char* vShader = "../Shaders/shader.vert";
+static const char* fShader = "../Shaders/shader.frag";
 
 void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset) {
     for (size_t i = 0; i < indiceCount; i += 3) {
@@ -151,18 +151,18 @@ int main() {
 	
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
 
-	brickTexture = Texture((char*)"assets/textures/brick.png");
+	brickTexture = Texture((char*)"../assets/textures/brick.png");
     brickTexture.LoadTextureA();
-    dirtTexture = Texture((char*)"assets/textures/dirt.png");
+    dirtTexture = Texture((char*)"../assets/textures/dirt.png");
     dirtTexture.LoadTextureA();
-    plainTexture = Texture((char*)"assets/textures/plain.png");
+    plainTexture = Texture((char*)"../assets/textures/plain.png");
     plainTexture.LoadTextureA();
 
     livingRoom = Model();
-	livingRoom.LoadModel("assets/models/livingRoom/InteriorTest.obj");
+	livingRoom.LoadModel("../assets/models/livingRoom/InteriorTest.obj");
 
 	testObject = Model();
-    testObject.LoadModel("assets/models/x-wing/x-wing.obj");
+    testObject.LoadModel("../assets/models/x-wing/x-wing.obj");
 
     shinyMaterial = Material(1.0f, 32);
 	roughMaterial = Material(0.3f, 4);

@@ -74,7 +74,7 @@ int Window::Initialize() {
 
     glfwSetWindowUserPointer(mainWindow, this);
 
-
+    return 0;
 }
 
 void Window::createCallbacks() {

@@ -116,7 +116,7 @@ void Model::LoadMaterials(const aiScene* scene)
                 std::transform(filename.end() - 3, filename.end(), filename.end() - 3, ::tolower);
                 #endif
 
-				std::string texPath = std::string("assets/textures/") + filename;
+				std::string texPath = std::string("../assets/textures/") + filename;
 
 				textureList[i] = new Texture(texPath.c_str());
 
@@ -129,7 +129,7 @@ void Model::LoadMaterials(const aiScene* scene)
 		}
 
 		if (!textureList[i]) {
-			textureList[i] = new Texture("assets/textures/plain.png");
+			textureList[i] = new Texture("../assets/textures/plain.png");
 			textureList[i]->LoadTextureA();
 		}
 	}
