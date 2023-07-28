@@ -52,8 +52,8 @@ DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-static const char* vShader = "Shaders/shader.vert";
-static const char* fShader = "Shaders/shader.frag";
+static const char* vShader = "../Shaders/shader.vert";
+static const char* fShader = "../Shaders/shader.frag";
 
 void CreateObjects(){
     Sphere sphere(glm::vec3(0.0f, 2.0f, 0.0f), 1.0f);
@@ -96,15 +96,15 @@ int main() {
     float pitch = 0.0f;
     camera = Camera(cameraPosition, glm::vec3(0.0f, 1.0f, 0.0f), yaw, pitch, 5.0f, 0.5f);
 
-	brickTexture = Texture((char*)"assets/textures/brick.png");
+	brickTexture = Texture((char*)"../assets/textures/brick.png");
     brickTexture.LoadTextureA();
-    dirtTexture = Texture((char*)"assets/textures/dirt.png");
+    dirtTexture = Texture((char*)"../assets/textures/dirt.png");
     dirtTexture.LoadTextureA();
-    plainTexture = Texture((char*)"assets/textures/grid_64x64.png");
+    plainTexture = Texture((char*)"../assets/textures/grid_64x64.png");
     plainTexture.LoadTextureA();
 
 	testObject = Model();
-    testObject.LoadModel("assets/models/x-wing/x-wing.obj");
+    testObject.LoadModel("../assets/models/x-wing/x-wing.obj");
     float xXWingPos = -26.0f;
 
     shinyMaterial = Material(1.0f, 32);
