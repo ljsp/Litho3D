@@ -63,6 +63,19 @@ void Camera::mouseControl(GLfloat xChange, GLfloat yChange) {
 	update();
 }
 
+void Camera::setCameraPosition(glm::vec3 position)
+{
+	this->position = position;
+}
+
+void Camera::setCameraOrientation(GLfloat yaw, GLfloat pitch)
+{
+	this->yaw = yaw;
+	this->pitch = pitch;
+
+	update();
+}
+
 glm::vec3 Camera::getCameraPosition()
 {
 	return position;

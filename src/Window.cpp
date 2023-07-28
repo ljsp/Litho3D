@@ -74,7 +74,11 @@ int Window::Initialize() {
 
     glfwSetWindowUserPointer(mainWindow, this);
 
-
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
 }
 
 void Window::createCallbacks() {

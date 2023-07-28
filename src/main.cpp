@@ -46,7 +46,6 @@ Texture plainTexture;
 Material shinyMaterial;
 Material roughMaterial;
 
-Model livingRoom;
 Model testObject;
 
 DirectionalLight mainLight;
@@ -56,72 +55,21 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 static const char* vShader = "Shaders/shader.vert";
 static const char* fShader = "Shaders/shader.frag";
 
-void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset) {
-    for (size_t i = 0; i < indiceCount; i += 3) {
-		unsigned int in0 = indices[i] * vLength;
-        unsigned int in1 = indices[i + 1] * vLength;
-        unsigned int in2 = indices[i + 2] * vLength;
-        glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1], vertices[in1 + 2] - vertices[in0 + 2]);
-		glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1], vertices[in2 + 2] - vertices[in0 + 2]);
-        glm::vec3 normal = glm::normalize(glm::cross(v1, v2));
-        
-		in0 += normalOffset; in1 += normalOffset; in2 += normalOffset;
-		vertices[in0] += normal.x; vertices[in0 + 1] = normal.y; vertices[in0 + 2] += normal.z;
-		vertices[in1] += normal.x; vertices[in1 + 1] = normal.y; vertices[in1 + 2] += normal.z;
-        vertices[in2] += normal.x; vertices[in2 + 1] = normal.y; vertices[in2 + 2] += normal.z;
-    }
-
-    for (size_t i = 0; i < verticeCount / vLength; i++) {
-        unsigned int nOffset = i * vLength + normalOffset;
-        glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
-        vec = glm::normalize(vec);
-		vertices[nOffset] = vec.x; vertices[nOffset + 1] = vec.y; vertices[nOffset + 2] = vec.z; 
-    }
-}
-
 void CreateObjects(){
+    Sphere sphere(glm::vec3(0.0f, 2.0f, 0.0f), 1.0f);
+    Mesh* obj = new Mesh(sphere, 64);
+    meshList.push_back(obj);
 
-    unsigned int indices[] = {
-		0, 3, 1,
-		1, 3, 2,
-		2, 3, 0,
-		0, 1, 2
-	};
-    
-    GLfloat vertices[] = {
-		//    x       y      z         u     v        nx    ny    nz
-			-1.0f, -1.0f,  -0.6f,     0.0f, 0.0f,    0.0f, 0.0f, 0.0f,
-			0.0f,   -1.0f,  1.0f,     0.5f, 0.0f,    0.0f, 0.0f, 0.0f,
-			1.0f,   -1.0f,  -0.6f,     1.0f, 0.0f,    0.0f, 0.0f, 0.0f,
-			0.0f,   1.0f,   0.0f,     0.5f, 1.0f,    0.0f, 0.0f, 0.0f
-    };
+    Pyramid pyramid(glm::vec3(-1.0f, -1.0f, -0.6f),
+                glm::vec3(0.0f, -1.0f, 1.0f),
+                glm::vec3(1.0f, -1.0f, -0.6f),
+                glm::vec3(0.0f, 1.0f, 0.0f));
+    Mesh* pyramidMesh = new Mesh(pyramid);
+    meshList.push_back(pyramidMesh);
 
-    unsigned int floorIndices[]{
-        0, 2, 1,
-        1, 2, 3
-    };
-
-    GLfloat floorVertices[] = {
-		//    x       y      z         u     v        nx    ny    nz
-		    -10.0f, 0.0f,   -10.0f,    0.0f, 0.0f,    0.0f, -1.0f, 0.0f,
-			10.0f,  0.0f,   -10.0f,    10.0f, 0.0f,   0.0f, -1.0f, 0.0f,
-			-10.0f, 0.0f,   10.0f,     0.0f, 10.0f,   0.0f, -1.0f, 0.0f,
-			10.0f,  0.0f,   10.0f,     10.0f, 10.0f,  0.0f, -1.0f, 0.0f
-	};
-
-    calcAverageNormals(indices, 12, vertices, 32, 8, 5);
-
-	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, 32, 12);
-    meshList.push_back(obj1);
-
-    Mesh* obj2 = new Mesh();
-    obj2->CreateMesh(vertices, indices, 32, 12);
-    meshList.push_back(obj2);
-
-	Mesh* obj3 = new Mesh();
-	obj3->CreateMesh(floorVertices, floorIndices, 32, 6);
-	meshList.push_back(obj3);
+    Plane plane = Plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	Mesh* planeMesh = new Mesh(plane);
+	meshList.push_back(planeMesh);
     
 }
 
@@ -136,33 +84,28 @@ int main() {
     mainWindow = Window(1920, 1080);
     mainWindow.Initialize();
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(mainWindow.getWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 130");
-
     CreateObjects();
     CreateShaders();
 
+    bool freeCamera = false;
     bool show_demo_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImVec4 clear_color = ImVec4(0.41f, 0.43f, 0.47f, 1.00f);
 	
-    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
+    glm::vec3 cameraPosition(0.0f, 0.0f, 0.0f);
+    float yaw = -90.0f;
+    float pitch = 0.0f;
+    camera = Camera(cameraPosition, glm::vec3(0.0f, 1.0f, 0.0f), yaw, pitch, 5.0f, 0.5f);
 
 	brickTexture = Texture((char*)"assets/textures/brick.png");
     brickTexture.LoadTextureA();
     dirtTexture = Texture((char*)"assets/textures/dirt.png");
     dirtTexture.LoadTextureA();
-    plainTexture = Texture((char*)"assets/textures/plain.png");
+    plainTexture = Texture((char*)"assets/textures/grid_64x64.png");
     plainTexture.LoadTextureA();
-
-    livingRoom = Model();
-	livingRoom.LoadModel("assets/models/livingRoom/InteriorTest.obj");
 
 	testObject = Model();
     testObject.LoadModel("assets/models/x-wing/x-wing.obj");
+    float xXWingPos = -26.0f;
 
     shinyMaterial = Material(1.0f, 32);
 	roughMaterial = Material(0.3f, 4);
@@ -170,22 +113,6 @@ int main() {
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
                                  0.3f, 0.3f,
                                  0.0f, 0.0f, -1.0f);
-
-    unsigned int pointLightCount = 0;
-    
-    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f,
-                                0.4f, 0.4f,
-                                0.0f, 0.0f, 0.0f,
-                                0.3f, 0.2f, 0.1f);
-
-	pointLightCount++;
-
-    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f,
-                                0.4f, 0.4f,
-                                -4.0f, 2.0f, 0.0f,
-                                0.3f, 0.1f, 0.1f);
-
-    pointLightCount++;
 
 	unsigned int spotLightCount = 0;
 
@@ -195,9 +122,7 @@ int main() {
 		                        0.0f, -1.0f, 0.0f,
 		                        0.3f, 0.2f, 0.1f,
 		                        20.0f);
-    
 	spotLightCount++;
-    
     
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0,
 		   uniformSpecularIntensity = 0, uniformShininess = 0, uniformEyePosition = 0;
@@ -212,10 +137,18 @@ int main() {
 
         glfwPollEvents();
 
-		camera.keyControl(mainWindow.getKeys(), deltaTime);
-        camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        if (freeCamera) {
+		    camera.keyControl(mainWindow.getKeys(), deltaTime);
+            camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+        }
+        else {
+            camera.setCameraPosition(cameraPosition);
+            camera.setCameraOrientation(yaw, pitch);
+        }
+
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -231,7 +164,6 @@ int main() {
         uniformShininess = shaderList[0].GetShininessLocation();
 
         shaderList[0].SetDirectionalLight(&mainLight);
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -247,28 +179,21 @@ int main() {
         meshList[0]->RenderMesh();
 
 		model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 2.5f, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         dirtTexture.UseTexture();
 		roughMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[1]->RenderMesh();
 
-        /*model = glm::mat4(1.0f);
+        model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -1.5f, -2.5f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         plainTexture.UseTexture();
         shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[2]->RenderMesh();*/
+        meshList[2]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -5.0f, -2.5f));
-        model = glm::scale(model, glm::vec3(4.0f, 6.0f, 4.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        livingRoom.RenderModel();
-
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-26.0f, -2.0f, 22.0f));
+        model = glm::translate(model, glm::vec3(xXWingPos, -2.0f, 22.0f));
         model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
         //model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -278,21 +203,22 @@ int main() {
         glUseProgram(0);
 
         {
-            static float f = 0.0f;
-            static int counter = 0;
+            ImGui::Begin("Control Panel");                          // Create a window called "Hello, world!" and append into it.
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
+            ImGui::Text("Camera");
+            ImGui::Checkbox("Free Camera", &freeCamera);
+            ImGui::SliderFloat("posX", &cameraPosition.x, -50.0f, 50.0f);
+            ImGui::SliderFloat("posY", &cameraPosition.y, -50.0f, 50.0f);
+            ImGui::SliderFloat("posZ", &cameraPosition.z, -50.0f, 50.0f);
+            ImGui::SliderFloat("yaw",  &yaw, -90.0f, 90.0f);
+            ImGui::SliderFloat("pitch", &pitch, -90.0f, 90.0f);
+
+            ImGui::Text("X-Wing position");
+			ImGui::SliderFloat("X", &xXWingPos, -50.0f, 50.0f);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
