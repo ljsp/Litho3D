@@ -92,7 +92,7 @@ int main() {
     ImVec4 clear_color = ImVec4(0.41f, 0.43f, 0.47f, 1.00f);
 	
     glm::vec3 cameraPosition(0.0f, 0.0f, 0.0f);
-    float yaw = -90.0f;
+    float yaw = 0.0f;
     float pitch = 0.0f;
     camera = Camera(cameraPosition, glm::vec3(0.0f, 1.0f, 0.0f), yaw, pitch, 5.0f, 0.5f);
 
@@ -105,7 +105,7 @@ int main() {
 
 	testObject = Model();
     testObject.LoadModel("../assets/models/x-wing/x-wing.obj");
-    float xXWingPos = -26.0f;
+    float xXWingPos = 25.0f;
 
     shinyMaterial = Material(1.0f, 32);
 	roughMaterial = Material(0.3f, 4);
@@ -141,7 +141,9 @@ int main() {
 
         if (freeCamera) {
 		    camera.keyControl(mainWindow.getKeys(), deltaTime);
-            camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+            //camera.mouseControl(glm::radians(mainWindow.getXChange()), glm::radians(mainWindow.getYChange()));
+            camera.scrollControl(mainWindow.getScrollXChange(), mainWindow.getScrollYChange(),
+                                    deltaTime);
         }
         else {
             camera.setCameraPosition(cameraPosition);
@@ -171,7 +173,7 @@ int main() {
         glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
         glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
+        model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
         //model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         brickTexture.UseTexture();
@@ -179,21 +181,21 @@ int main() {
         meshList[0]->RenderMesh();
 
 		model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
+        model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         dirtTexture.UseTexture();
 		roughMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[1]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.5f, -2.5f));
+        model = glm::translate(model, glm::vec3(6.0f, -1.5f, 0.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         plainTexture.UseTexture();
         shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[2]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(xXWingPos, -2.0f, 22.0f));
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, xXWingPos));
         model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
         //model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -209,14 +211,17 @@ int main() {
 
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-            ImGui::Text("Camera");
+            ImGui::SeparatorText("Camera");
+
             ImGui::Checkbox("Free Camera", &freeCamera);
             ImGui::SliderFloat("posX", &cameraPosition.x, -50.0f, 50.0f);
             ImGui::SliderFloat("posY", &cameraPosition.y, -50.0f, 50.0f);
             ImGui::SliderFloat("posZ", &cameraPosition.z, -50.0f, 50.0f);
-            ImGui::SliderFloat("yaw",  &yaw, -90.0f, 90.0f);
-            ImGui::SliderFloat("pitch", &pitch, -90.0f, 90.0f);
 
+            ImGui::SliderAngle("yaw angle", &yaw, -180.0f, 180.0f);
+            ImGui::SliderAngle("pitch angle", &pitch, -89.0f, 89.0f);
+
+            ImGui::SeparatorText("X-wing");
             ImGui::Text("X-Wing position");
 			ImGui::SliderFloat("X", &xXWingPos, -50.0f, 50.0f);
 

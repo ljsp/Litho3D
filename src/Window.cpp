@@ -84,6 +84,7 @@ int Window::Initialize() {
 void Window::createCallbacks() {
     glfwSetKeyCallback(mainWindow, handleKeys);
     glfwSetCursorPosCallback(mainWindow, handleMouse);
+	glfwSetScrollCallback(mainWindow, handleScroll);
 }
 
 GLfloat Window::getXChange() {
@@ -96,6 +97,18 @@ GLfloat Window::getYChange() {
     GLfloat theChange = yChange;
     yChange = 0.0f;
     return theChange;
+}
+
+GLfloat Window::getScrollXChange() {
+	GLfloat theChange = scrollXChange;
+    scrollXChange = 0.0f;
+	return theChange;
+}
+
+GLfloat Window::getScrollYChange() {
+	GLfloat theChange = scrollYChange;
+	scrollYChange = 0.0f;
+	return theChange;
 }
 
 void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int mode) {
@@ -118,10 +131,10 @@ void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int m
 void Window::handleMouse(GLFWwindow* window, double xPos, double yPos) {
     Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
     
-    if (theWindow->mouseFistMoved) {
+    if (theWindow->mouseFirstMoved) {
 		theWindow->lastX = xPos;
 		theWindow->lastY = yPos;
-        theWindow->mouseFistMoved = false;
+        theWindow->mouseFirstMoved = false;
     }
 
 	theWindow->xChange = xPos - theWindow->lastX;
@@ -129,6 +142,13 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos) {
 
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
+}
+
+void Window::handleScroll(GLFWwindow* window, double xOffset, double yOffset) {
+	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+	theWindow->scrollXChange = xOffset;
+	theWindow->scrollYChange = yOffset;
 }
 
 Window::~Window() {

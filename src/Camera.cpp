@@ -63,6 +63,27 @@ void Camera::mouseControl(GLfloat xChange, GLfloat yChange) {
 	update();
 }
 
+void Camera::scrollControl(GLfloat scrollX, GLfloat scrollY, GLfloat deltaTime) {
+
+	GLfloat velocity = moveSpeed * deltaTime * 10.0f;
+
+	if (scrollX > 0) {
+		position += right * velocity;
+	}
+
+	if (scrollX < 0) {
+		position -= right * velocity;
+	}
+
+	if (scrollY > 0) {
+		position += front * velocity;
+	}
+
+	if (scrollY < 0) {
+		position -= front * velocity;
+	}
+}
+
 void Camera::setCameraPosition(glm::vec3 position)
 {
 	this->position = position;
@@ -86,9 +107,9 @@ glm::mat4 Camera::calculateViewMatrix() {
 }
 
 void Camera::update() {
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.x = cos(yaw) * cos(pitch);
+	front.y = sin(pitch);
+	front.z = sin(yaw) * cos(pitch);
 	front = glm::normalize(front);
 
 	right = glm::normalize(glm::cross(front, worldUp));
