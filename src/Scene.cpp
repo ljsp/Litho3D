@@ -70,8 +70,17 @@ void Scene::Init(float aspectRatio)
 	projection = glm::perspective(45.0f, aspectRatio, 0.1f, 100.0f);
 }
 
-void Scene::Update(float deltaTime)
+void Scene::Update(bool* keys, GLfloat scrollXChange, GLfloat scrollYChange, float deltaTime, bool freeCamera)
 {
+	if (freeCamera) {
+		camera.keyControl(keys, deltaTime);
+		//camera.mouseControl(glm::radians(mainWindow.getXChange()), glm::radians(mainWindow.getYChange()));
+		camera.scrollControl(scrollXChange, scrollYChange, deltaTime);
+	}
+	else {
+		camera.setCameraPosition(params.cameraPosition);
+		camera.setCameraOrientation(params.yaw, params.pitch);
+	}
 }
 
 void Scene::Render(GLuint uniformProjection, GLuint uniformModel, GLuint uniformView,
@@ -103,17 +112,17 @@ void Scene::Render(GLuint uniformProjection, GLuint uniformModel, GLuint uniform
 	shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 	meshList[2]->RenderMesh();
 
-	/*model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, -2.0f, xXWingPos));
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -2.0f, params.xXWingPos));
 	model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
 	//model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-	testObject.RenderModel();*/
+	testObject.RenderModel();
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, -2.0f,  params.xXWingPos));
-	model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+	model = glm::translate(model, glm::vec3(0.0f, -1.6f, 0.0f));
+	//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
 	//model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);

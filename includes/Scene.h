@@ -23,7 +23,7 @@ public:
 	void CreateObjects();
 
 	void Init(float aspectRatio);
-	void Update(float deltaTime);
+	void Update(bool* keys, GLfloat scrollXChange, GLfloat scrollYChange, float deltaTime, bool freeCamera);
 	void Render(GLuint uniformProjection, GLuint uniformModel, GLuint uniformView, GLuint uniformSpecularIntensity, GLuint uniformShininess, GLuint uniformEyePosition);
 	void Clear();
 

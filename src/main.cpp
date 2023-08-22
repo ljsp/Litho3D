@@ -61,23 +61,11 @@ int main() {
         glfwPollEvents();
 
         ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-        if (freeCamera) {
-		    scene.getCamera().keyControl(mainWindow.getKeys(), deltaTime);
-            //camera.mouseControl(glm::radians(mainWindow.getXChange()), glm::radians(mainWindow.getYChange()));
-            scene.getCamera().scrollControl(mainWindow.getScrollXChange(), mainWindow.getScrollYChange(),
-                                    deltaTime);
-        }
-        else {
-            scene.getCamera().setCameraPosition(scene.params.cameraPosition);
-            scene.getCamera().setCameraOrientation(scene.params.yaw, scene.params.pitch);
-        }
+        
+        scene.Update(mainWindow.getKeys(), mainWindow.getScrollXChange(), mainWindow.getScrollYChange(), deltaTime, freeCamera);
 
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-
-        scene.Render(uniformProjection, uniformModel, uniformView,
-                     uniformSpecularIntensity, uniformShininess, uniformEyePosition);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -93,6 +81,9 @@ int main() {
 
         shaderList[0].SetDirectionalLight(scene.getMainLight());
 		shaderList[0].SetSpotLights(scene.getSpotLights(), scene.params.spotLightCount);
+
+        scene.Render(uniformProjection, uniformModel, uniformView,
+            uniformSpecularIntensity, uniformShininess, uniformEyePosition);
 
         glUseProgram(0);
 
