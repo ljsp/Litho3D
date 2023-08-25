@@ -104,9 +104,10 @@ int main() {
             ImGui::SliderAngle("yaw angle", &scene.params.yaw, -180.0f, 180.0f);
             ImGui::SliderAngle("pitch angle", &scene.params.pitch, -89.0f, 89.0f);
 
-            ImGui::SeparatorText("X-wing");
-            ImGui::Text("X-Wing position");
-			ImGui::SliderFloat("X", &scene.params.xXWingPos, -50.0f, 50.0f);
+            ImGui::SeparatorText("Scene");
+            ImGui::Text("Scene RotationY");
+			ImGui::SliderAngle("rotY", &scene.params.sceneRotationY, -10000.0f, 10000.0f);
+            ImGui::SliderAngle("rotz", &scene.params.sceneRotationZ, -180.0f, 180.0f);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();

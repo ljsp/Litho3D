@@ -31,10 +31,13 @@ void Model::LoadModel(const std::string& fileName)
 	LoadNode(scene->mRootNode, scene);
 	
 	LoadMaterials(scene);
+	
 }
 
 void Model::addModel(const Model& model)
 {
+	unsigned int offset = textureList.size();
+	
 	for (size_t i = 0; i < model.meshList.size(); i++) {
 		meshList.push_back(model.meshList[i]);
 	}
@@ -43,10 +46,8 @@ void Model::addModel(const Model& model)
 		textureList.push_back(model.textureList[i]);
 	}
 
-	unsigned int offset = textureList.size();
-
 	for (size_t i = 0; i < model.meshToTex.size(); i++) {
-		meshToTex.push_back(model.meshToTex[i]);
+		meshToTex.push_back(model.meshToTex[i] + offset);
 	}
 }
 

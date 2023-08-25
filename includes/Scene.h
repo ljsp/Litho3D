@@ -4,6 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "CommonValues.h"
 #include "Mesh.h"
 #include "Camera.h"
@@ -38,12 +42,16 @@ public:
 		float yaw;
 		float pitch;
 
+		float sceneRotationY;
+		float sceneRotationZ;
+
 		unsigned int spotLightCount;
 
 		float xXWingPos;
 	} params;
 	
 private:
+	
 	std::vector<Mesh*> meshList;
 
 	glm::mat4 projection;
