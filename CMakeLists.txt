@@ -12,7 +12,7 @@ find_package(assimp REQUIRED)
 
 include_directories("includes" "imgui")
 
-add_executable(litho_3d__ src/main.cpp src/Mesh.cpp src/Camera.cpp src/Shader.cpp src/Window.cpp src/DirectionalLight.cpp src/Light.cpp src/Material.cpp src/PointLight.cpp src/SpotLight.cpp src/Texture.cpp src/Model.cpp imgui/imgui_widgets.cpp imgui/imgui_tables.cpp imgui/imgui_impl_opengl3.cpp imgui/imgui_impl_glfw.cpp imgui/imgui_draw.cpp imgui/imgui_demo.cpp imgui/imgui.cpp)
+add_executable(litho_3d__ src/main.cpp src/Mesh.cpp src/Camera.cpp src/Shader.cpp src/Window.cpp src/DirectionalLight.cpp src/Light.cpp src/Material.cpp src/PointLight.cpp src/SpotLight.cpp src/Texture.cpp src/Model.cpp src/Scene.cpp imgui/imgui_widgets.cpp imgui/imgui_tables.cpp imgui/imgui_impl_opengl3.cpp imgui/imgui_impl_glfw.cpp imgui/imgui_draw.cpp imgui/imgui_demo.cpp imgui/imgui.cpp)
 
 # Lier GLFW, GLEW, OpenGL & Assimp
 target_link_libraries(litho_3d__ glfw GLEW::GLEW ${OPENGL_LIBRARIES} ${ASSIMP_LIBRARIES})
