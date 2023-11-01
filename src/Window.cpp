@@ -79,6 +79,8 @@ int Window::Initialize() {
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
     ImGui_ImplOpenGL3_Init("#version 130");
+
+    return 0;
 }
 
 void Window::createCallbacks() {
