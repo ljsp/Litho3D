@@ -39,11 +39,11 @@ void Scene::Init(float aspectRatio)
 	camera = Camera(params.cameraPosition, glm::vec3(0.0f, 1.0f, 0.0f), params.yaw, params.pitch, 5.0f, 0.5f);
 
 	brickTexture = Texture((char*)"../assets/textures/brick.png");
-	brickTexture.LoadTextureA();
+	brickTexture.LoadTexture();
 	dirtTexture = Texture((char*)"../assets/textures/dirt.png");
-	dirtTexture.LoadTextureA();
+	dirtTexture.LoadTexture();
 	plainTexture = Texture((char*)"../assets/textures/grid_64x64.png");
-	plainTexture.LoadTextureA();
+	plainTexture.LoadTexture();
 
 	testObject = Model();
 	testObject.LoadModel("../assets/models/maya/maya.obj");

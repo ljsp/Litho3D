@@ -38,6 +38,8 @@ int main() {
     mainWindow = Window(1920, 1080);
     mainWindow.Initialize();
 
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
     CreateShaders();
 
 	Scene scene = Scene();
@@ -59,8 +61,6 @@ int main() {
         lastTime = now;
 
         glfwPollEvents();
-
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
         
         scene.Update(mainWindow.getKeys(), mainWindow.getScrollXChange(), mainWindow.getScrollYChange(), deltaTime, freeCamera);
 

@@ -6,6 +6,7 @@ Texture::Texture() {
 	height = 0;
 	bitDepth = 0;
 	fileLocation = nullptr;
+    texData = nullptr;
 }
 
 Texture::Texture(const char* fileLoc) {
@@ -14,15 +15,31 @@ Texture::Texture(const char* fileLoc) {
 	height = 0;
 	bitDepth = 0;
 	fileLocation = fileLoc;
+    texData = nullptr;
 }
 
 bool Texture::LoadTexture() {
-	unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
-	if (!texData) {
-		printf("Failed to find: %s\n", fileLocation);
-		return false;
-	}
+    texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
+    if (!texData) {
+        printf("Failed to find: %s\n", fileLocation);
+        return false;
+    }
 
+    switch (bitDepth) {
+        case 3:
+            LoadTextureRGB();
+            break;
+        case 4:
+            LoadTextureRGBA();
+            break;
+        default:
+            printf("Texture has %d channels\n", bitDepth);
+            break;
+    }
+
+}
+
+bool Texture::LoadTextureRGB() {
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -41,13 +58,7 @@ bool Texture::LoadTexture() {
 	return true;
 }
 
-bool Texture::LoadTextureA() {
-	unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
-	if (!texData) {
-		printf("Failed to find: %s\n", fileLocation);
-		return false;
-	}
-	
+bool Texture::LoadTextureRGBA() {
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	
@@ -78,6 +89,7 @@ void Texture::ClearTexture() {
 	height = 0;
 	bitDepth = 0;
 	fileLocation = nullptr;
+    texData = nullptr;
 }
 
 Texture::~Texture() {

@@ -11,7 +11,8 @@ public:
 	Texture(const char* fileLoc);
 	
 	bool LoadTexture();
-	bool LoadTextureA();
+	bool LoadTextureRGB();
+	bool LoadTextureRGBA();
 	
 	void UseTexture();
 	void ClearTexture();
@@ -21,7 +22,8 @@ public:
 private: 
 	GLuint textureID;
 	int width, height, bitDepth;
-	
+
 	const char* fileLocation;
+    unsigned char* texData;
 };
 

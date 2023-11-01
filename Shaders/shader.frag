@@ -130,6 +130,11 @@ void main() {
     vec4 finalColor = CalcDirectionalLight();
     finalColor += CalcPointLights();
     finalColor += CalcSpotLights();
+
+    vec4 tex = texture(theTexture, TexCoord);
+    if(tex.a < 0.5) {
+        discard;
+    }
     
-    color = texture(theTexture, TexCoord) * finalColor;
+    color = tex * finalColor;
 }
