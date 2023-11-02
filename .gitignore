@@ -5,6 +5,12 @@
 *.vcxproj.filters
 *.vcxproj.user
 
+Makefile
+bin
+obj
 cmake-build-debug
 x64
 imgui.ini
+
+Litho3D/assets/models/bistro-small
+Litho3D/assets/textures/small
