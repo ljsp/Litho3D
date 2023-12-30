@@ -1,0 +1,67 @@
+CXX = em++
+CXXFLAGS = -std=c++11 -Wall -O3
+LDLIBS = -lglut -lGLU -lGL -lGLEW -lglfw -lassimp
+OBJDIR = ./obj/
+BINDIR = ./bin/
+TARGET = $(BINDIR)OpenGLCourseApp.html
+
+# Source files
+SOURCES = $(shell find . -name '*.cpp')
+
+IMGUI_DIR = libs/imgui/
+SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
+
+# Object files
+OBJECTS = $(patsubst %.cpp, $(OBJDIR)%.o, $(notdir $(SOURCES)))
+
+LDFLAGS =
+EMS =
+
+#EMS += -s DISABLE_EXCEPTION_CATCHING=1
+EMS += --preload-file Litho3D/shaders
+EMS += --preload-file Litho3D/assets/textures
+EMS += --preload-file Litho3D/assets/models/
+
+LDFLAGS += -s USE_GLFW=3 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=0 -s ASSERTIONS=1
+LDFLAGS += -s FULL_ES3=1 -s USE_SDL=2
+LDFLAGS += -gsource-map
+
+
+# Uncomment next line to fix possible rendering bugs with Emscripten version older then 1.39.0 (https://github.com/ocornut/imgui/issues/2877)
+#EMS += -s BINARYEN_TRAP_MODE=clamp
+#EMS += -s SAFE_HEAP=1    ## Adds overhead
+
+#USE_FILE_SYSTEM ?= 0
+#ifeq ($(USE_FILE_SYSTEM), 0)
+#LDFLAGS += -s NO_FILESYSTEM=1
+#CPPFLAGS += -DIMGUI_DISABLE_FILE_FUNCTIONS
+#endif
+#ifeq ($(USE_FILE_SYSTEM), 1)
+#LDFLAGS += --no-heap-copy --preload-file ../../misc/fonts@/fonts
+#endif
+
+#CPPFLAGS += -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
+#CPPFLAGS += -g
+#CPPFLAGS += -Wall -Wformat -Os $(EMS)
+#LDFLAGS += --shell-file libs/emscripten/shell_minimal.html
+LDFLAGS += $(EMS)
+
+
+INCLUDES = -I./imgui -I./Shaders -I./Textures
+
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS) $(IMGUI_OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS) $(INCLUDES) $(LDFLAGS)
+
+$(OBJDIR)%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+	
+$(OBJDIR)%.o: ./imgui/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c -o $@ $<
+
+clean:
+	rm -f $(OBJDIR)*.o $(TARGET)
+
+.PHONY: all clean
+

@@ -56,7 +56,7 @@ void Scene::Init(float aspectRatio)
 	plainTexture.LoadTexture();
 
 	testObject = Model();
-	testObject.LoadModel(modelPath + "maya/maya.obj");
+	testObject.LoadModel(modelPath + "lamp/Model_Blank.stl");
 	params.xXWingPos = 25.0f;
 
 	bed = Model();
